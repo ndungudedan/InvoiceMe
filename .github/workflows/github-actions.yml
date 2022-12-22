@@ -1,0 +1,56 @@
+name: PDFMerger Build and Deployment
+run-name: ${{ github.actor }}’s Build and Test
+on: [push]
+env:
+ DOTNET_VERSION: '3.1.x'
+jobs:
+ build-and-test:
+  runs-on: windows-latest
+  steps:
+  - name: Setup dotnet
+    uses: actions/checkout@v3
+  - uses: actions/setup-dotnet@v3.0.1
+    with:
+      dotnet-version: ${{ env.DOTNET_VERSION }}   
+  - uses: actions/cache@v3
+    with:
+      path: ~/.nuget/packages
+      key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+      restore-keys: |
+        ${{ runner.os }}-nuget
+
+  - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+  - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+  - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+  - name: Check out repository code
+    uses: actions/checkout@v3
+  - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+  - run: echo "The workflow is now ready to test your code on the runner."
+  - name: List files in the repository
+    run: |
+      ls ${{ github.workspace }}
+  - name: Display dotnet version
+    run: dotnet --version
+  - name: Install Nuget Dependencies
+    run: nuget restore
+  - name: Install Dependencies
+    run: dotnet restore
+  - name: Run linters
+    uses: wearerequired/lint-action@v2
+    with:
+      auto_fix: true
+  - name: Build
+    run: dotnet build
+  - name: Test with the dotnet CLI
+    run: dotnet test                   
+  - run: echo "The status of the job is as follows ${{ job.status }}."
+  
+ rainforest:
+  runs-on: ubuntu-latest
+  name: Run Rainforest
+  steps:
+  - name: Rainforest
+    uses: rainforestapp/github-action@master
+    with:
+      token: c4595d3fb95cd17da666746b8e463cb3
+      run_group_id: 13210
