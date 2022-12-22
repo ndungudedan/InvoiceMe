@@ -44,3 +44,13 @@ jobs:
   - name: Test with the dotnet CLI
     run: dotnet test                   
   - run: echo "The status of the job is as follows ${{ job.status }}."
+  
+ rainforest:
+  runs-on: ubuntu-latest
+  name: Run Rainforest
+  steps:
+  - name: Rainforest
+    uses: rainforestapp/github-action@master
+    with:
+      token: c4595d3fb95cd17da666746b8e463cb3
+      run_group_id: 13210
